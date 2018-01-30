@@ -17,17 +17,22 @@
 #include <math.h>
 #include <iostream>
 
+// atoi
+#include <cstdlib>
 
 using namespace cv;
 
 #define MAX_SOURCE_SIZE (0x100000)
-#define LocalItemCount 64
-#define LoopCount 16
+//#define LocalItemCount 64
+//#define LoopCount 16
 #define errno_t int
 
 #ifdef __unix
 #define fopen_s(pFile,filename,mode) ((*(pFile))=fopen((filename),  (mode)))==NULL
 #endif
+
+int LocalItemCount = 0;
+int LoopCount = 0;
 
 void BayerKernel(uchar* src, uchar* out, const int width, const int height)
 {
@@ -134,11 +139,13 @@ int main(int argc, char *argv[])
 	IplImage* bayerImg = 0;
 	IplImage* debayerImg;
 	int height, width, step, channels, depth;
-	if (argc<2)
+	if (argc<4)
 	{
-	printf("Usage: opencv_demosaic <image-file-name>\n");
+	printf("Usage: opencv_demosaic <image-file-name> <local-item-count> <loop-count> \n");
 	exit(0);
 	}
+	LocalItemCount = atoi(argv[2]);
+	LoopCount = atoi(argv[3]);
 	// Load image
 	bayerImg = cvLoadImage(argv[1], 0);
 	if (!bayerImg)
