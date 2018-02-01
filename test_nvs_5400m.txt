@@ -1,0 +1,61 @@
+Simulation start
+local item count 1  | loop count 1
+			result  Elapsed time is: 27.304 ms
+local item count 1  | loop count 8294400
+			result  Elapsed time is: 27.429 ms
+local item count 8  | loop count 1
+			result  Elapsed time is: 28.705 ms
+local item count 8  | loop count 16
+			result  Elapsed time is: -970.219 ms
+local item count 8  | loop count 128
+			result  Elapsed time is: 29.083 ms
+local item count 8  | loop count 1036800
+			result  Elapsed time is: 29.629 ms
+local item count 16  | loop count 1
+			result  Elapsed time is: 28.716 ms
+local item count 16  | loop count 8
+			result  Elapsed time is: 29.327 ms
+local item count 16  | loop count 64
+			result  Elapsed time is: 29.266 ms
+local item count 16  | loop count 640
+			result  Elapsed time is: 28.766 ms
+local item count 32  | loop count 1
+			result  Elapsed time is: 29.091 ms
+local item count 32  | loop count 4
+			result  Elapsed time is: 29.326 ms
+local item count 32  | loop count 160
+			result  Elapsed time is: 29.292 ms
+local item count 64  | loop count 1
+			result  Elapsed time is: 28.919 ms
+local item count 64  | loop count 2
+			result  Elapsed time is: 28.554 ms
+local item count 64  | loop count 4
+			result  Elapsed time is: 28.972 ms
+local item count 64  | loop count 16
+			result  Elapsed time is: 30.712 ms
+local item count 64  | loop count 80
+			result  Elapsed time is: 32.113 ms
+local item count 128  | loop count 1
+			result  Elapsed time is: 31.053 ms
+local item count 128  | loop count 2
+			result  Elapsed time is: 33.413 ms
+local item count 256  | loop count 1
+			result  Elapsed time is: 33.522 ms
+local item count 256  | loop count 2
+			result  Elapsed time is: 32.039 ms
+local item count 256  | loop count 4
+			result  Elapsed time is: 32.235 ms
+local item count 256  | loop count 8
+			result  Elapsed time is: 32.633 ms
+local item count 256  | loop count 32400
+			result  Elapsed time is: 34.507 ms
+local item count 512  | loop count 1
+			result  Elapsed time is: 34.876 ms
+local item count 512  | loop count 2
+			result  Elapsed time is: 33.315 ms
+local item count 512  | loop count 16200
+			result  Elapsed time is: 34.265 ms
+local item count 1024  | loop count 1
+			result  Elapsed time is: 31.307 ms
+local item count 1024  | loop count 8100
+			result  Elapsed time is: 30.321 ms
