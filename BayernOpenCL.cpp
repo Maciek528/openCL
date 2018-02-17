@@ -51,9 +51,6 @@ void BayerKernel_ushort(ushort* src, ushort* out, const int width, const int hei
 	int64_t OutBufferSize =  MaxBufferSize * 3;
 
 
-
-	std::cout << OutBufferSize << std::endl;
-
 	ushort* dst1 = (ushort*)malloc(OutBufferSize);
 
 
