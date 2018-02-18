@@ -23,29 +23,29 @@ __kernel void mhc_kernel_uchar(__global uchar* a, __global uchar* c, const int G
 	int LOidx = get_local_id(0) + width * 2;
 
 	int range = get_global_size(0);
-	int height = range * GrpCount;
+	int height = range * GrpCount / width;
 
-
-	__local uchar sharedData[10];
 
 	for (int index = 0; index < GrpCount; index++)
 	{
 		int Gidx = (index * range + GLidx);
-
 
 		__local int Red, Green, Blue;
 
 		int R = (Gidx / width);		// R = index of Row, Max value is (heigth - 1)
 		int C = Gidx - (R * width);		// C = index of Column, Max value is  (width  - 1)
 
-
-		
-
 		
 		__local uchar pLocal[5000];
-		pLocal[LOidx - (width * 2)] = a[Gidx - width * 2 ];
-		pLocal[LOidx] = a[Gidx];
-		pLocal[LOidx + (width * 2) ] =  a[Gidx + width * 2];
+		pLocal[LOidx - (width * 2)] = a[Gidx - width * 2 ];	//Local Size 1024 - 512  - 256
+		pLocal[LOidx - (width * 2 - width/2)] = a[Gidx - (width * 2 - width/2)]; //Local Size  256
+		pLocal[LOidx - (width)] = a[Gidx - width];  //Local Size 512  - 256
+		pLocal[LOidx - (width/2)] = a[Gidx - width/2]; //Local Size 256
+		pLocal[LOidx] = a[Gidx]; //Local Size 1024 - 512  - 256
+		pLocal[LOidx + (width / 2)] = a[Gidx + width / 2]; //Local Size  256
+		pLocal[LOidx + (width)] = a[Gidx + width]; //Local Size 512  - 256
+		pLocal[LOidx + (width * 2 - width / 2)] = a[Gidx + (width * 2 - width / 2)];  //Local Size  256
+		pLocal[LOidx + (width * 2) ] =  a[Gidx + width * 2]; //Local Size 1024 - 512  - 256
 		
 		barrier(CLK_LOCAL_MEM_FENCE);
 
@@ -189,10 +189,6 @@ __kernel void mhc_kernel_uchar(__global uchar* a, __global uchar* c, const int G
 			}
 				
 		}
-
-		
-
-
 
 		c[Gidx * 3] = Blue;
 		c[Gidx * 3 + 1] = Green;
