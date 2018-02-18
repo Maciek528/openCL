@@ -20,7 +20,7 @@ __kernel void mhc_kernel_uchar(__global uchar* a, __global uchar* c, const int G
 {
 	
 	int GLidx = get_global_id(0);
-	int LOidx = get_local_id(0);
+	int LOidx = get_local_id(0) + width * 2;
 
 	int range = get_global_size(0);
 	int height = range * GrpCount;
@@ -38,25 +38,27 @@ __kernel void mhc_kernel_uchar(__global uchar* a, __global uchar* c, const int G
 		int R = (Gidx / width);		// R = index of Row, Max value is (heigth - 1)
 		int C = Gidx - (R * width);		// C = index of Column, Max value is  (width  - 1)
 
+
 		
 
-		global uchar* pixel = a + Gidx;
+		
 		__local uchar pLocal[5000];
-		pLocal[LOidx] = pixel[0];
-	
-
+		pLocal[LOidx - (width * 2)] = a[Gidx - width * 2 ];
+		pLocal[LOidx] = a[Gidx];
+		pLocal[LOidx + (width * 2) ] =  a[Gidx + width * 2];
+		
 		barrier(CLK_LOCAL_MEM_FENCE);
 
 		
 		if (R % 2 == 0 && C % 2 == 0)
 		{ // RED PIXEL
 
-			Green = ((2 * (pixel[-width] + pLocal[LOidx-1] + pLocal[LOidx+1] + pixel[width])) +
+			Green = ((2 * (pLocal[LOidx -width] + pLocal[LOidx-1] + pLocal[LOidx+1] + pLocal[LOidx + width])) +
 				(4 * pLocal[LOidx])
-				- pixel[-2 * width] - pLocal[LOidx -2] - pLocal[LOidx+2] - pixel[2 * width]) >> 3;
-			Blue = ((4 * (pixel[-width - 1] + pixel[-width + 1] + pixel[width - 1] + pixel[width + 1])) +
+				- pLocal[LOidx -2 * width] - pLocal[LOidx -2] - pLocal[LOidx+2] - pLocal[LOidx + 2 * width]) >> 3;
+			Blue = ((4 * (pLocal[LOidx -width - 1] + pLocal[LOidx -width + 1] + pLocal[LOidx + width - 1] + pLocal[LOidx +width + 1])) +
 				(12 * pLocal[LOidx])
-				- 3 * pixel[-2 * width] - 3 * pLocal[LOidx-2] - 3 * pLocal[LOidx+2] - 3 * pixel[2 * width]) >> 4;
+				- 3 * pLocal[LOidx -2 * width] - 3 * pLocal[LOidx-2] - 3 * pLocal[LOidx+2] - 3 * pLocal[LOidx + 2 * width]) >> 4;
 			Red = pLocal[LOidx];
 
 			Green = normal(Green);
@@ -85,12 +87,12 @@ __kernel void mhc_kernel_uchar(__global uchar* a, __global uchar* c, const int G
 		{ // BLUE PIXEL
 
 
-			Green = ((2 * (pixel[-width] + pLocal[LOidx - 1] + pLocal[LOidx + 1] + pixel[width])) +
+			Green = ((2 * (pLocal[LOidx - width] + pLocal[LOidx - 1] + pLocal[LOidx + 1] + pLocal[LOidx + width])) +
 				(4 * pLocal[LOidx])
-				- pixel[-2 * width] - pLocal[LOidx - 2] - pLocal[LOidx + 2] - pixel[2 * width]) >> 3;
-			Red = ((4 * (pixel[-width - 1] + pixel[-width + 1] + pixel[width - 1] + pixel[width + 1])) +
+				- pLocal[LOidx - 2 * width] - pLocal[LOidx - 2] - pLocal[LOidx + 2] - pLocal[LOidx + 2 * width]) >> 3;
+			Red = ((4 * (pLocal[LOidx - width - 1] + pLocal[LOidx - width + 1] + pLocal[LOidx + width - 1] + pLocal[LOidx + width + 1])) +
 				(12 * pLocal[LOidx])
-				- 3 * pixel[-2 * width] - 3 * pLocal[LOidx - 2] - 3 * pLocal[LOidx + 2] - 3 * pixel[2 * width]) >> 4;
+				- 3 * pLocal[LOidx - 2 * width] - 3 * pLocal[LOidx - 2] - 3 * pLocal[LOidx + 2] - 3 * pLocal[LOidx + 2 * width]) >> 4;
 			Blue = pLocal[LOidx];
 
 			Red = normal(Red);
@@ -123,11 +125,11 @@ __kernel void mhc_kernel_uchar(__global uchar* a, __global uchar* c, const int G
 
 			Blue = (10 * pLocal[LOidx] +
 				8 * (pLocal[LOidx-1] + pLocal[LOidx +1])
-				- 2 * (pixel[-width - 1] + pixel[-width + 1] + pixel[width - 1] + pixel[width + 1] + pLocal[LOidx -2] + pLocal[LOidx+2])
-				+ (pixel[-2 * width] + pixel[2 * width])) >> 4;
+				- 2 * (pLocal[LOidx -width - 1] + pLocal[LOidx -width + 1] + pLocal[LOidx + width - 1] + pLocal[LOidx + width + 1] + pLocal[LOidx -2] + pLocal[LOidx+2])
+				+ (pLocal[LOidx -(2 * width)] + pLocal[LOidx + (2 * width)])) >> 4;
 			Red = (10 * pLocal[LOidx] +
-				8 * (pixel[-width] + pixel[width])
-				- 2 * (pixel[-width - 1] + pixel[-width + 1] + pixel[width - 1] + pixel[width + 1] + pixel[-2 * width] + pixel[2 * width])
+				8 * (pLocal[LOidx -width] + pLocal[LOidx + width])
+				- 2 * (pLocal[LOidx -width - 1] + pLocal[LOidx -width + 1] + pLocal[LOidx + width - 1] + pLocal[LOidx + width + 1] + pLocal[LOidx -2 * width] + pLocal[LOidx +2 * width])
 				+ (pLocal[LOidx -2] + pLocal[LOidx+2])) >> 4;
 			Green = pLocal[LOidx]; // copy G
 
@@ -158,11 +160,11 @@ __kernel void mhc_kernel_uchar(__global uchar* a, __global uchar* c, const int G
 
 			Red = (10 * pLocal[LOidx] +
 				8 * (pLocal[LOidx - 1] + pLocal[LOidx + 1])
-				- 2 * (pixel[-width - 1] + pixel[-width + 1] + pixel[width - 1] + pixel[width + 1] + pLocal[LOidx - 2] + pLocal[LOidx + 2])
-				+ (pixel[-2 * width] + pixel[2 * width])) >> 4;
+				- 2 * (pLocal[LOidx - width - 1] + pLocal[LOidx - width + 1] + pLocal[LOidx + width - 1] + pLocal[LOidx + width + 1] + pLocal[LOidx - 2] + pLocal[LOidx + 2])
+				+ (pLocal[LOidx - (2 * width)] + pLocal[LOidx + (2 * width)])) >> 4;
 			Blue = (10 * pLocal[LOidx] +
-				8 * (pixel[-width] + pixel[width])
-				- 2 * (pixel[-width - 1] + pixel[-width + 1] + pixel[width - 1] + pixel[width + 1] + pixel[-2 * width] + pixel[2 * width])
+				8 * (pLocal[LOidx - width] + pLocal[LOidx + width])
+				- 2 * (pLocal[LOidx - width - 1] + pLocal[LOidx - width + 1] + pLocal[LOidx + width - 1] + pLocal[LOidx + width + 1] + pLocal[LOidx - 2 * width] + pLocal[LOidx + 2 * width])
 				+ (pLocal[LOidx - 2] + pLocal[LOidx + 2])) >> 4;
 			Green = pLocal[LOidx]; // copy G
 
