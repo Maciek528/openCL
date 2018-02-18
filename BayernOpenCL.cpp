@@ -253,7 +253,7 @@ void MHC_Kernel_uchar(uchar* src, uchar* out, const int width, const int height)
 	char *source_str = (char*)malloc(MAX_SOURCE_SIZE);
 	size_t source_size;
 	FILE *fp;
-	errno_t errnum = fopen_s(&fp, "mhc_kernel_uchar.cl", "r");
+	errno_t errnum = fopen_s(&fp, "kernel_local.cl", "r");
 	fseek(fp, 0, SEEK_END);
 	source_size = ftell(fp);
 	rewind(fp);
