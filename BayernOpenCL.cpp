@@ -25,7 +25,7 @@ using namespace cv;
 
 #define MAX_SOURCE_SIZE (0x100000)
 #define LocalItemCount 256
-#define LoopCount 1
+#define LoopCount 4
 
 #define errno_t int
 
@@ -36,7 +36,7 @@ using namespace cv;
 #define CL_CHECK_ERROR(err) do{if (err) {printf("FATAL ERROR %d at " __FILE__ ":%d\n",err,__LINE__); exit(1); } } while(0)
 
 
-void BayerKernel_ushort(ushort* src, ushort* out, const int width, const int height)
+void BayerKernel_ushort(uchar* src, uchar* out, const int width, const int height)
 {
 	//// Create a program from the kernel source
 	cv::ocl::setUseOpenCL(true);
@@ -45,13 +45,13 @@ void BayerKernel_ushort(ushort* src, ushort* out, const int width, const int hei
 	cl_uint ret_num_platforms;
 	cl_platform_id *platforms = NULL;
 
-	int64_t MaxBufferSize = width * height * 2;
-	int64_t range = MaxBufferSize / LoopCount >>1;
+	int64_t MaxBufferSize = width * height;
+	int64_t range = MaxBufferSize / LoopCount;
 	int64_t GrpSize = LoopCount;
 	int64_t OutBufferSize =  MaxBufferSize * 3;
 
 
-	ushort* dst1 = (ushort*)malloc(OutBufferSize);
+	uchar* dst1 = (uchar*)malloc(OutBufferSize);
 
 
 	//Open kernel.cl file and store it in local string
